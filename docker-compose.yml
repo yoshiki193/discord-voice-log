@@ -1,0 +1,14 @@
+version: '3'
+services:
+  dvl:
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: 'discord-voice-log'
+    working_dir: '/root/'
+    tty: true
+    volumes:
+      - .:/root/opt
+    environment:
+      BOT_TOKEN: '${BOT_TOKEN}'

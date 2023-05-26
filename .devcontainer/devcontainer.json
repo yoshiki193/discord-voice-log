@@ -1,0 +1,13 @@
+{
+    "name":"dvl",
+    "dockerComposeFile":["../docker-compose.yml"],
+    "service": "dvl",
+	"workspaceFolder": "/root/opt/",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-python.python"
+			]
+		}
+	}
+}
