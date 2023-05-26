@@ -21,6 +21,7 @@ class command(commands.Cog):
             if before.channel!=None:
                 sendch=member.guild.system_channel if self.logch is None else self.logch
                 if len(before.channel.members)==0:
+                    await sendch.mention("@everyone")
                     await sendch.send(embed=discord.Embed(title="end call",description=f"{before.channel} by {member}"))
             if after.channel!=None:
                 sendch=member.guild.system_channel if self.logch is None else self.logch
