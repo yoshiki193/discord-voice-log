@@ -21,12 +21,11 @@ class command(commands.Cog):
             if before.channel!=None:
                 sendch=member.guild.system_channel if self.logch is None else self.logch
                 if len(before.channel.members)==0:
-                    await sendch.mention("@everyone")
                     await sendch.send(embed=discord.Embed(title="end call",description=f"{before.channel} by {member}"))
             if after.channel!=None:
                 sendch=member.guild.system_channel if self.logch is None else self.logch
                 if len(after.channel.members)==1:
-                    await sendch.send(embed=discord.Embed(title="initiating call",description=f"{after.channel} by {member}"))
+                    await sendch.send(content="@everyone",embed=discord.Embed(title="initiating call",description=f"{after.channel} by {member}"))
 
 async def setup(bot:commands.Bot):
     await bot.add_cog(command(bot))
