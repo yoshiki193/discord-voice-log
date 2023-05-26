@@ -18,14 +18,14 @@ class command(commands.Cog):
     @commands.Cog.listener()
     async def on_voice_state_update(self,member,before,after):
         if after.channel!=before.channel:
-            if before.channel==None and after.channel!=None:
-                sendch=member.guild.system_channel if self.logch is None else self.logch
-                if len(after.channel.members)==1:
-                    await sendch.send(content=f"started by {member}")
-            elif before.channel!=None:
+            if before.channel!=None:
                 sendch=member.guild.system_channel if self.logch is None else self.logch
                 if len(before.channel.members)==0:
-                    await sendch.send(content=f"ended by {member}")
+                    await sendch.send(embed=discord.Embed(title="end call",description=f"{before.channel} by {member}"))
+            if after.channel!=None:
+                sendch=member.guild.system_channel if self.logch is None else self.logch
+                if len(after.channel.members)==1:
+                    await sendch.send(embed=discord.Embed(title="initiating call",description=f"{after.channel} by {member}"))
 
 async def setup(bot:commands.Bot):
     await bot.add_cog(command(bot))
