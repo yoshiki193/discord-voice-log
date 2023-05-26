@@ -7,10 +7,13 @@ class command(commands.Cog):
         self.bot=bot
         self.logch=None
     
-    @app_commands.command()
-    async def test(self,interaction:discord.Interaction,channel:discord.TextChannel):
+    @app_commands.command(name="select_logch",description="select text channel for logging")
+    async def select_logch(self,interaction:discord.Interaction,channel:discord.TextChannel=None):
         self.logch=channel
-        await interaction.response.send_message(f"notify {channel}")
+        if self.logch is None:
+            await interaction.response.send_message(f"log system's message channel")
+        else:
+            await interaction.response.send_message(f"log {self.logch}")
 
     @commands.Cog.listener()
     async def on_voice_state_update(self,member,before,after):
