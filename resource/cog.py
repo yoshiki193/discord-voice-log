@@ -1,6 +1,7 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
+import datetime
 
 class command(commands.Cog):
     def __init__(self,bot):
@@ -21,11 +22,48 @@ class command(commands.Cog):
             if before.channel!=None:
                 sendch=member.guild.system_channel if self.logch is None else self.logch
                 if len(before.channel.members)==0:
-                    await sendch.send(embed=discord.Embed(title="end call",description=f"{before.channel} by {member}"))
+                    self.timee=datetime.datetime.now().replace(microsecond=0)
+                    data={
+                        "title":"Initiating call",
+                        "fields":[
+                            {
+                                "name":"Channel",
+                                "value":f"{before.channel}",
+                                "inline":True
+                            },
+                            {
+                                "name":"By",
+                                "value":f"{member}",
+                                "inline":True
+                            },
+                            {
+                                "name":"Time",
+                                "value":f"{self.timee-self.times}",
+                                "inline":True
+                            }
+                        ]
+                    }
+                    await sendch.send(embed=discord.Embed.from_dict(data=data))
             if after.channel!=None:
                 sendch=member.guild.system_channel if self.logch is None else self.logch
                 if len(after.channel.members)==1:
-                    await sendch.send(content="@everyone",embed=discord.Embed(title="initiating call",description=f"{after.channel} by {member}"))
+                    self.times=datetime.datetime.now().replace(microsecond=0)
+                    data={
+                        "title":"Initiating call",
+                        "fields":[
+                            {
+                                "name":"Channel",
+                                "value":f"{after.channel}",
+                                "inline":True
+                            },
+                            {
+                                "name":"By",
+                                "value":f"{member}",
+                                "inline":True
+                            }
+                        ]
+                    }
+                    await sendch.send(content="@everyone",embed=discord.Embed.from_dict(data=data))
 
 async def setup(bot:commands.Bot):
     await bot.add_cog(command(bot))
