@@ -15,7 +15,7 @@ class command(commands.Cog):
                 sendch=member.guild.system_channel
                 if len(before.channel.members)==0:
                     data={
-                        "title":"ended call",
+                        "title":"end call",
                         "fields":[
                             {
                                 "name":"Channel",
