@@ -15,7 +15,7 @@ class command(commands.Cog):
                 sendch=member.guild.system_channel
                 if len(before.channel.members)==0:
                     data={
-                        "title":"end call",
+                        "title":f"{before.channel}終了",
                         "fields":[
                             {
                                 "name":"Channel",
@@ -34,7 +34,7 @@ class command(commands.Cog):
                 sendch=member.guild.system_channel
                 if len(after.channel.members)==1:
                     data={
-                        "title":"Initiating call",
+                        "title":f"{after.channel}開始",
                         "fields":[
                             {
                                 "name":"Channel",
