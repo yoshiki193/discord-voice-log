@@ -28,8 +28,6 @@ class command(commands.Cog):
                             sql=f"SELECT unix, message_id FROM {TABLENAME} WHERE guild_id = %s AND ch_id = %s"
                             cursor.execute(sql,(f"{member.guild.id}",f"{before.channel.id}"))
                             tmp=cursor.fetchone()
-                            delsql=f"DELETE FROM {TABLENAME} WHERE guild_id = %s AND ch_id = %s"
-                            cursor.execute(delsql,(f"{member.guild.id}",f"{before.channel.id}"))
                     retime=int(time.time())-tmp[0]
                     delme=await sendch.fetch_message(tmp[1])
                     await delme.delete()
@@ -76,8 +74,14 @@ class command(commands.Cog):
                     message=await sendch.send(content="@everyone",embed=discord.Embed.from_dict(data=data))
                     with self.psql:
                         with self.psql.cursor() as cursor:
-                            sql=f"INSERT INTO {TABLENAME} (guild_id, ch_id, message_id, unix) VALUES (%s, %s, %s, %s)"
-                            cursor.execute(sql,(f"{member.guild.id}",f"{after.channel.id}", f"{message.id}", f"{unix}"))
+                            ssql=f"SELECT unix FROM {TABLENAME} WHERE guild_id = %s AND ch_id = %s"
+                            cursor.execute(ssql,(f"{member.guild.id}",f"{after.channel.id}"))
+                            if cursor.fetchone() is None:
+                                sql=f"INSERT INTO {TABLENAME} (guild_name, guild_id, ch_id, message_id, unix) VALUES (%s, %s, %s, %s, %s)"
+                                cursor.execute(sql,(f"{member.guild.name}",f"{member.guild.id}",f"{after.channel.id}", f"{message.id}", f"{unix}"))
+                            else:
+                                sql=f"UPDATE {TABLENAME} SET message_id = %s, unix = %s WHERE guild_id = %s AND ch_id = %s"
+                                cursor.execute(sql,(f"{message.id}", f"{unix}", f"{member.guild.id}", f"{after.channel.id}"))
                         self.psql.commit()
 
 async def setup(bot:commands.Bot):
