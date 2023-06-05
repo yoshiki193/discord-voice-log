@@ -12,5 +12,3 @@ services:
       - .:/root/opt
     environment:
       BOT_TOKEN: '${BOT_TOKEN}'
-    ports:
-      - "5432:5432"
