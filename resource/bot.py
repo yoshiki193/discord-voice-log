@@ -5,18 +5,12 @@ import os
 
 token=os.getenv("BOT_TOKEN")
 
-EXTENTIONS=["cog"]
-
 intents=discord.Intents.all()
 bot=commands.Bot(command_prefix="$",intents=intents)
 
-async def load_extensions():
-    for ex in EXTENTIONS:
-        await bot.load_extension(ex)
-
 async def main():
     async with bot:
-        await load_extensions()
+        await bot.load_extension("cog")
         await bot.start(token=token)
 
 @bot.event
