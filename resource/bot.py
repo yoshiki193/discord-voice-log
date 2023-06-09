@@ -5,7 +5,7 @@ import os
 
 token=os.getenv("BOT_TOKEN")
 
-intents=discord.Intents.all()
+intents=discord.Intents.default()
 bot=commands.Bot(command_prefix="$",intents=intents)
 
 async def main():
