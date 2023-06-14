@@ -6,7 +6,7 @@ import time
 import psycopg2
 import json
 
-with ("./id.json") as f:
+with open("id.json") as f:
     idl=json.load(f)
 
 USERS=idl["postgres"]

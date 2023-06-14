@@ -3,7 +3,7 @@ import discord
 from discord.ext import commands
 import json
 
-with ("./id.json") as f:
+with open("id.json") as f:
     idl=json.load(f)
 
 token=idl["token"]
