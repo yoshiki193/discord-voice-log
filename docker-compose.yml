@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: 'discord-voice-log'
-    working_dir: '/root/opt'
+    working_dir: '/root/opt/resource'
     tty: true
     volumes:
       - .:/root/opt
