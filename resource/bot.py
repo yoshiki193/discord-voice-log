@@ -1,9 +1,12 @@
 import asyncio
 import discord
 from discord.ext import commands
-import os
+import json
 
-token=os.getenv("BOT_TOKEN")
+with ("./id.json") as f:
+    idl=json.load(f)
+
+token=idl["token"]
 
 intents=discord.Intents.default()
 bot=commands.Bot(command_prefix="$",intents=intents)

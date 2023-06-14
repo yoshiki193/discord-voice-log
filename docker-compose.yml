@@ -10,5 +10,3 @@ services:
     tty: true
     volumes:
       - .:/root/opt
-    environment:
-      BOT_TOKEN: '${BOT_TOKEN}'

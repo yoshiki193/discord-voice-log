@@ -4,10 +4,14 @@ from discord.ext import commands
 import datetime
 import time
 import psycopg2
+import json
 
-USERS="postgres"
-HOST=""
-PASSWORD=""
+with ("./id.json") as f:
+    idl=json.load(f)
+
+USERS=idl["postgres"]
+HOST=idl["host"]
+PASSWORD=idl["password"]
 DATABASE="dvl"
 TABLENAME="vlog"
 
@@ -20,7 +24,7 @@ class command(commands.Cog):
     @commands.Cog.listener()
     async def on_voice_state_update(self,member,before,after):
         if after.channel!=before.channel:
-            if before.channel!=None and len(before.channel.members)==0:
+            if before.channel!=None and len(before.channel.members)==0 and len(before.channel.changed_roles)<=1:
                 sendch=member.guild.system_channel
                 with self.psql:
                     with self.psql.cursor() as cursor:
@@ -52,7 +56,7 @@ class command(commands.Cog):
                 }
                 await sendch.send(embed=discord.Embed.from_dict(data=data))
         
-            if after.channel!=None and len(after.channel.members)==1:
+            if after.channel!=None and len(after.channel.members)==1 and len(after.channel.changed_roles)<=1:
                 sendch=member.guild.system_channel
                 unix=int(time.time())
                 data={
