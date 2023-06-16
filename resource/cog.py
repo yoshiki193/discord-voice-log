@@ -35,7 +35,7 @@ class command(commands.Cog):
                 delme=await sendch.fetch_message(tmp[1])
                 await delme.delete()
                 data={
-                    "title":"通話記録",
+                    "title":f"*{datetime.timedelta(seconds=retime)}*",
                     "fields":[
                         {
                             "name":"Channel",
@@ -45,11 +45,6 @@ class command(commands.Cog):
                         {
                             "name":"By",
                             "value":f"{member}",
-                            "inline":True
-                        },
-                        {
-                            "name":"Time",
-                            "value":f"{datetime.timedelta(seconds=retime)}",
                             "inline":True
                         }
                     ]
