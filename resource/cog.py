@@ -22,7 +22,7 @@ class command(commands.Cog):
         self.psql=psycopg2.connect(host=HOST,user=USERS,password=PASSWORD,database=DATABASE)
     
     @commands.Cog.listener()
-    async def on_voice_state_update(self,member,before,after):
+    async def on_voice_state_update(self,member:discord.Member,before:discord.VoiceState,after:discord.VoiceState):
         if after.channel!=before.channel:
             if before.channel!=None and len(before.channel.members)==0 and len(before.channel.changed_roles)<=1:
                 sendch=member.guild.system_channel
