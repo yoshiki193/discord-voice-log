@@ -2,7 +2,7 @@
     "name":"dvl",
     "dockerComposeFile":["../docker-compose.yml"],
     "service": "dvl",
-	"workspaceFolder": "/root/opt/",
+	"workspaceFolder": "/root/opt/resource",
 	"customizations": {
 		"vscode": {
 			"extensions": [
