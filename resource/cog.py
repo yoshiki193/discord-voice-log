@@ -29,7 +29,7 @@ class command(commands.Cog):
     @commands.Cog.listener()
     async def on_voice_state_update(self,member:discord.Member,before:discord.VoiceState,after:discord.VoiceState):
         if after.channel!=before.channel:
-            if before.channel!=None and len(before.channel.members)==0 and len(before.channel.changed_roles)<=1:
+            if before.channel!=None and len(before.channel.members)==0:
                 sendch=member.guild.system_channel
                 with self.psql.cursor() as cursor:
                     sql=f"SELECT unix, message_id FROM {TABLENAME} WHERE guild_id = %s AND ch_id = %s"
@@ -58,7 +58,7 @@ class command(commands.Cog):
                 }
                 await sendch.send(embed=discord.Embed.from_dict(data=data))
         
-            if after.channel!=None and len(after.channel.members)==1 and len(after.channel.changed_roles)<=1:
+            if after.channel!=None and len(after.channel.members)==1:
                 sendch=member.guild.system_channel
                 unix=int(time.time())
                 data={
