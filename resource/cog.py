@@ -68,12 +68,12 @@ class command(commands.Cog):
             sendch=member.guild.system_channel
             unix=int(time.time())
             data={
-                "title":f"通話が開始されました <t:{unix}:R>",
+                "title":f"{after.channel}",
                 "color":11584734,
                 "fields":[
                     {
-                        "name":"Channel",
-                        "value":f"{after.channel}",
+                        "name":"Time",
+                        "value":f"<t:{unix}:R>",
                         "inline":True
                     },
                     {
