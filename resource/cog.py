@@ -48,7 +48,7 @@ class command(commands.Cog):
                 retime=0
             data={
                 "title":f"{before.channel}",
-                "color":16753920,
+                "color":16737095,
                 "fields":[
                     {
                         "name":"Time",
@@ -69,7 +69,7 @@ class command(commands.Cog):
             unix=int(time.time())
             data={
                 "title":f"通話が開始されました <t:{unix}:R>",
-                "color":16753920,
+                "color":16737095,
                 "fields":[
                     {
                         "name":"Channel",
