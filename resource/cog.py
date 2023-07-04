@@ -27,10 +27,9 @@ class command(commands.Cog):
                 self.psql.commit()
 
     def judge(self,vs:discord.VoiceState):
-        if vs.channel!=None:
-            er=[i for i in vs.channel.changed_roles if "@everyone" == i.name]
-            if len(er)==1 and vs.channel.overwrites[er[0]].is_empty() or len(er)==0:
-                return 1
+        er=[i for i in vs.channel.changed_roles if "@everyone" == i.name]
+        if len(er)==1 and vs.channel.overwrites[er[0]].is_empty() or len(er)==0:
+            return 1
     
     @commands.Cog.listener()
     async def on_voice_state_update(self,member:discord.Member,before:discord.VoiceState,after:discord.VoiceState):
