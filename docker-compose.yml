@@ -12,7 +12,6 @@ services:
       - .:/root/opt
   psql:
     image: postgres:15
-    restart: always
     container_name: postgresql
     ports:
       - 5433:5432
