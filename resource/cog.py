@@ -21,18 +21,11 @@ class command(commands.Cog):
         self.psql=psycopg2.connect(host=HOST,user=USERS,password=PASSWORD,database=DATABASE)
 
     def judge(self,vs:discord.VoiceState):
-<<<<<<< HEAD
         if vs.channel!=None:
             er=[i for i in vs.channel.changed_roles if "@everyone" == i.name]
             if len(er)==1 and vs.channel.overwrites[er[0]].is_empty() or len(er)==0:
                 return 1
 
-=======
-        er=[i for i in vs.channel.changed_roles if "@everyone" == i.name]
-        if len(er)==1 and vs.channel.overwrites[er[0]].is_empty() or len(er)==0:
-            return 1
-    
->>>>>>> c65dd18993283634f65c89c1229f8db35b349def
     @commands.Cog.listener()
     async def on_voice_state_update(self,member:discord.Member,before:discord.VoiceState,after:discord.VoiceState):
         if before.channel!=None and len(before.channel.members)==0 and self.judge(before):
