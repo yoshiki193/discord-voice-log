@@ -19,18 +19,20 @@ class command(commands.Cog):
         self.bot=bot
         self.logch=None
         self.psql=psycopg2.connect(host=HOST,user=USERS,password=PASSWORD,database=DATABASE)
-        with self.psql.cursor() as cursor:
-            cursor.execute("SELECT tablename FROM pg_tables WHERE schemaname not like 'pg_%' and schemaname != 'information_schema'")
-
-            if not [ i for i in cursor.fetchall() if "vlog" in i]:
-                cursor.execute("CREATE TABLE vlog (guild_name varchar(255),guild_id bigint,ch_id bigint,message_id bigint,unix bigint)")
-                self.psql.commit()
 
     def judge(self,vs:discord.VoiceState):
+<<<<<<< HEAD
+        if vs.channel!=None:
+            er=[i for i in vs.channel.changed_roles if "@everyone" == i.name]
+            if len(er)==1 and vs.channel.overwrites[er[0]].is_empty() or len(er)==0:
+                return 1
+
+=======
         er=[i for i in vs.channel.changed_roles if "@everyone" == i.name]
         if len(er)==1 and vs.channel.overwrites[er[0]].is_empty() or len(er)==0:
             return 1
     
+>>>>>>> c65dd18993283634f65c89c1229f8db35b349def
     @commands.Cog.listener()
     async def on_voice_state_update(self,member:discord.Member,before:discord.VoiceState,after:discord.VoiceState):
         if before.channel!=None and len(before.channel.members)==0 and self.judge(before):
@@ -62,7 +64,7 @@ class command(commands.Cog):
                 ]
             }
             await sendch.send(embed=discord.Embed.from_dict(data=data))
-    
+
         if after.channel!=None and len(after.channel.members)==1 and self.judge(after):
             sendch=member.guild.system_channel
             unix=int(time.time())
