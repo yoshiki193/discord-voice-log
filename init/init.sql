@@ -3,5 +3,6 @@ CREATE TABLE vlog (
     guild_id bigint,
     ch_id bigint,
     message_id bigint,
-    unix bigint
+    unix bigint,
+    send_ch bigint
 );
