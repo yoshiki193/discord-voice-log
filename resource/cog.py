@@ -123,7 +123,7 @@ class command(commands.Cog):
         with self.psql.cursor() as cursor:
             sql=f"DELETE FROM {TABLENAME}"
             cursor.execute(sql)
-        await interaction.response.send_message("init comp")
+        await interaction.response.send_message(f"init {interaction.guild.system_channel}")
 
 
 async def setup(bot:commands.Bot):
