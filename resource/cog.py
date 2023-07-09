@@ -27,14 +27,14 @@ class command(commands.Cog):
     @commands.Cog.listener()
     async def on_voice_state_update(self,member:discord.Member,before:discord.VoiceState,after:discord.VoiceState):
         if before.channel!=after.channel:
-            with self.psql.cursor() as cursor:
+            if before.channel!=None and len(before.channel.members)==0 and self.judge(before):
+                with self.psql.cursor() as cursor:
                     sql=f"SELECT send_ch FROM {TABLENAME} WHERE guild_id = %s AND guild_name = %s"
                     cursor.execute(sql,(f"{member.guild.id}","send"))
                     if (ch:=cursor.fetchone()) is None:
                         sendch=member.guild.system_channel
                     else:
                         sendch=member.guild.get_channel(ch[0])
-            if before.channel!=None and len(before.channel.members)==0 and self.judge(before):
                 with self.psql.cursor() as cursor:
                     sql=f"SELECT unix, message_id FROM {TABLENAME} WHERE guild_id = %s AND ch_id = %s"
                     cursor.execute(sql,(f"{member.guild.id}",f"{before.channel.id}"))
@@ -64,6 +64,13 @@ class command(commands.Cog):
                 await sendch.send(embed=discord.Embed.from_dict(data=data))
 
             if after.channel!=None and len(after.channel.members)==1 and self.judge(after):
+                with self.psql.cursor() as cursor:
+                    sql=f"SELECT send_ch FROM {TABLENAME} WHERE guild_id = %s AND guild_name = %s"
+                    cursor.execute(sql,(f"{member.guild.id}","send"))
+                    if (ch:=cursor.fetchone()) is None:
+                        sendch=member.guild.system_channel
+                    else:
+                        sendch=member.guild.get_channel(ch[0])
                 unix=int(time.time())
                 data={
                     "title":f"{after.channel}",
