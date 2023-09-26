@@ -46,12 +46,12 @@ class command(commands.Cog):
                 else:
                     retime=0
                 data={
-                    "title":f"{before.channel}",
+                    "title":f"{datetime.timedelta(seconds=retime)}",
                     "color":11584734,
                     "fields":[
                         {
-                            "name":"Time",
-                            "value":f"{datetime.timedelta(seconds=retime)}",
+                            "name":"Channel",
+                            "value":f"{before.channel}",
                             "inline":True
                         },
                         {
