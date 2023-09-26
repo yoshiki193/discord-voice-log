@@ -73,12 +73,12 @@ class command(commands.Cog):
                         sendch=member.guild.get_channel(ch[0])
                 unix=int(time.time())
                 data={
-                    "title":f"{after.channel}",
+                    "title":f"<t:{unix}:R>",
                     "color":11584734,
                     "fields":[
                         {
-                            "name":"Time",
-                            "value":f"<t:{unix}:R>",
+                            "name":"Channel",
+                            "value":f"{after.channel}",
                             "inline":True
                         },
                         {
@@ -101,7 +101,7 @@ class command(commands.Cog):
                 self.psql.commit()
     
     @discord.app_commands.command(
-            description="change textch to send"
+            description="change the sending channel"
     )
     async def sendch(self,interaction:discord.Interaction,ch:discord.TextChannel):
         await interaction.response.defer()
@@ -115,16 +115,16 @@ class command(commands.Cog):
                 sql=f"UPDATE {TABLENAME} SET send_ch = %s WHERE guild_id = %s and guild_name = %s"
                 cursor.execute(sql,(f"{ch.id}",f"{interaction.guild_id}","send"))
         self.psql.commit()
-        await interaction.followup.send(f"{ch} to send")
+        await interaction.followup.send(f"send to {ch}")
 
     @discord.app_commands.command(
-        description="init textch to send"
+        description="init the sending channel"
     )
     async def initch(self,interaction:discord.Interaction):
         with self.psql.cursor() as cursor:
             sql=f"DELETE FROM {TABLENAME}"
             cursor.execute(sql)
-        await interaction.response.send_message(f"init {interaction.guild.system_channel}")
+        await interaction.response.send_message(f"change {interaction.guild.system_channel}")
 
 
 async def setup(bot:commands.Bot):
