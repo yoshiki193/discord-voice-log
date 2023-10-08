@@ -46,12 +46,12 @@ class command(commands.Cog):
                 else:
                     retime=0
                 data={
-                    "title":f"{before.channel}",
+                    "title":f"{datetime.timedelta(seconds=retime)}",
                     "color":11584734,
                     "fields":[
                         {
-                            "name":"Time",
-                            "value":f"{datetime.timedelta(seconds=retime)}",
+                            "name":"Channel",
+                            "value":f"{before.channel}",
                             "inline":True
                         },
                         {
@@ -73,12 +73,12 @@ class command(commands.Cog):
                         sendch=member.guild.get_channel(ch[0])
                 unix=int(time.time())
                 data={
-                    "title":f"<t:{unix}:R>",
+                    "title":f"{after.channel}",
                     "color":11584734,
                     "fields":[
                         {
-                            "name":"Channel",
-                            "value":f"{after.channel}",
+                            "name":"Time",
+                            "value":f"<t:{unix}:R>",
                             "inline":True
                         },
                         {
