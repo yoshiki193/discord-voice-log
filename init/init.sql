@@ -4,5 +4,6 @@ CREATE TABLE vlog (
     ch_id bigint,
     message_id bigint,
     unix bigint,
-    send_ch bigint
+    send_ch bigint,
+    total_time bigint
 );
