@@ -146,7 +146,7 @@ class command(commands.Cog):
             sql=f"SELECT total_time FROM {TABLENAME} WHERE guild_id = %s AND ch_id = %s"
             cursor.execute(sql,(f"{interaction.guild_id}",f"{ch.id}"))
             if (result:=cursor.fetchone()) is None:
-                await interaction.followup.send(f"N/A")
+                await interaction.followup.send("N/A")
             else:
                 data={
                     "title":f"{datetime.timedelta(seconds=result[0])}",
