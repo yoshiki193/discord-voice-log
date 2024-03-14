@@ -4,6 +4,7 @@ import datetime
 import time
 import psycopg2
 import json
+import math
 
 with open("id.json") as f:
     idl=json.load(f)
@@ -149,7 +150,7 @@ class command(commands.Cog):
                 await interaction.followup.send("N/A")
             else:
                 data={
-                    "title":f"{datetime.timedelta(seconds=result[0])}",
+                    "title":f"{math.floor(result[0]/3600)}:{math.floor((result[0]%3600)/60)}:{(result[0]%3600)%60}",
                     "color":11584734,
                     "fields":[
                         {
