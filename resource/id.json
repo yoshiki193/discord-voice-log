@@ -1,6 +1,6 @@
 {
     "token":"",
-    "postgres":"",
-    "host":"",
-    "password":""
+    "postgres":"postgres",
+    "host":"postgresql",
+    "password":"postgres"
 }
