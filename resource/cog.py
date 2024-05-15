@@ -98,7 +98,7 @@ class command(commands.Cog):
                         }
                     ]
                 }
-                message=await sendch.send(content="@everyone",embed=discord.Embed.from_dict(data=data))
+                message=await sendch.send(embed=discord.Embed.from_dict(data=data))
                 with self.psql.cursor() as cursor:
                     sql=f"SELECT unix FROM {TABLENAME} WHERE guild_id = %s AND ch_id = %s"
                     cursor.execute(sql,(f"{member.guild.id}",f"{after.channel.id}"))
