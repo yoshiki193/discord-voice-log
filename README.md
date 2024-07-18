@@ -1,1 +1,1 @@
-docker compose のTOKEN変数にdiscordbotのapiトークンを張り付け
+docker-compose.ymlの環境変数TOKENにdiscordbotのapiトークンを張り付け
