@@ -1,0 +1,1 @@
+docker compose のTOKEN変数にdiscordbotのapiトークンを張り付け
