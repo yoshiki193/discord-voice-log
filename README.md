@@ -1,1 +1,2 @@
-docker-compose.ymlの環境変数TOKENにdiscordbotのapiトークンを張り付け
+# DISCORD VOICE CHANNEL LOG
+docker-compose.ymlの環境変数TOKENにdiscord botのtokenを貼り付け
