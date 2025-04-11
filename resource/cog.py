@@ -3,21 +3,18 @@ from discord.ext import commands
 import datetime
 import time
 import psycopg2
-import json
 import math
+import os
 
-with open("id.json") as f:
-    idl=json.load(f)
-
-USERS=idl["postgres"]
-HOST=idl["host"]
-PASSWORD=idl["password"]
+USER=os.environ["DB_USER"]
+HOST=os.environ["DB_HOST"]
+PASSWORD=os.environ["DB_PASSWD"]
 DATABASE="dvl"
 TABLENAME="vlog"
 
 class command(commands.Cog):
     def __init__(self,bot):
-        self.psql=psycopg2.connect(host=HOST,user=USERS,password=PASSWORD,database=DATABASE)
+        self.psql=psycopg2.connect(host=HOST,user=USER,password=PASSWORD,database=DATABASE)
 
     def judge(self,vs:discord.VoiceState):
         if vs.channel!=None:

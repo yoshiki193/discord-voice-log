@@ -9,6 +9,9 @@ services:
     tty: true
     environment:
       - TOKEN=${API_TOKEN}
+      - DB_USER=${DB_USER}
+      - DB_HOST=${DB_HOST}
+      - DB_PASSWD=${DB_PASSWD}
     volumes:
       - .:/root/opt
   psql:
@@ -17,8 +20,8 @@ services:
     ports:
       - 5432:5432
     environment:
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${DB_PASSWD}
+      - POSTGRES_USER=${DB_USER}
       - POSTGRES_DB=dvl
     volumes:
       - ./init:/docker-entrypoint-initdb.d
