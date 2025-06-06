@@ -17,8 +17,6 @@ services:
   psql:
     image: postgres:15
     container_name: postgresql
-    ports:
-      - 5432:5432
     environment:
       - POSTGRES_PASSWORD=${DB_PASSWD}
       - POSTGRES_USER=${DB_USER}
