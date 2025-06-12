@@ -4,23 +4,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: 'discord-voice-log'
+    container_name: 'dvl'
     working_dir: '/root/opt/resource'
-    tty: true
     environment:
       - TOKEN=${API_TOKEN}
-      - DB_USER=${DB_USER}
-      - DB_HOST=${DB_HOST}
-      - DB_PASSWD=${DB_PASSWD}
     volumes:
       - .:/root/opt
-  psql:
-    image: postgres:15
-    container_name: postgresql
-    environment:
-      - POSTGRES_PASSWORD=${DB_PASSWD}
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_DB=dvl
-    volumes:
-      - ./init:/docker-entrypoint-initdb.d
-      - ./data:/var/lib/postgresql/data

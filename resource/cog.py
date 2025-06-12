@@ -1,163 +1,98 @@
 import discord
 from discord.ext import commands
+import logging
+from db import Base, engine, SessionClass
+from model import Dvl
 import datetime
 import time
-import psycopg2
 import math
-import os
+from sqlalchemy import select, insert, update
 
-USER=os.environ["DB_USER"]
-HOST=os.environ["DB_HOST"]
-PASSWORD=os.environ["DB_PASSWD"]
-DATABASE="dvl"
-TABLENAME="vlog"
+logging.basicConfig(
+    level = logging.INFO,
+    format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers = [
+        logging.StreamHandler()
+    ]
+)
+
+logger = logging.getLogger('discord')
+logger.setLevel(logging.INFO)
 
 class command(commands.Cog):
     def __init__(self,bot):
-        self.psql=psycopg2.connect(host=HOST,user=USER,password=PASSWORD,database=DATABASE)
-
-    def judge(self,vs:discord.VoiceState):
-        if vs.channel!=None:
-            er=[i for i in vs.channel.changed_roles if "@everyone" == i.name]
-            if len(er)==1 and vs.channel.overwrites[er[0]].is_empty() or len(er)==0:
-                return 1
+        Base.metadata.create_all(bind=engine)
 
     @commands.Cog.listener()
-    async def on_voice_state_update(self,member:discord.Member,before:discord.VoiceState,after:discord.VoiceState):
-        if before.channel!=after.channel:
-            if before.channel!=None and len(before.channel.members)==0 and self.judge(before):
-                with self.psql.cursor() as cursor:
-                    sql=f"SELECT send_ch FROM {TABLENAME} WHERE guild_id = %s AND guild_name = %s"
-                    cursor.execute(sql,(f"{member.guild.id}","send"))
-                    if (ch:=cursor.fetchone()) is None:
-                        sendch=member.guild.system_channel
-                    else:
-                        sendch=member.guild.get_channel(ch[0])
-
-                    sql=f"SELECT unix, message_id FROM {TABLENAME} WHERE guild_id = %s AND ch_id = %s"
-                    cursor.execute(sql,(f"{member.guild.id}",f"{before.channel.id}"))
-                    if (tmp:=cursor.fetchone()) is not None:
-                        retime=int(time.time())-tmp[0]
-                        delme=await sendch.fetch_message(tmp[1])
-                        await delme.delete()
-                    else:
-                        retime=0
-
-                    sql=f"SELECT total_time FROM {TABLENAME} WHERE guild_id = %s AND ch_id = %s"
-                    cursor.execute(sql,(f"{member.guild.id}",f"{before.channel.id}"))
-                    if None in (totaltime:=cursor.fetchone()):
-                        sql=f"UPDATE {TABLENAME} SET total_time = %s WHERE guild_id = %s AND ch_id = %s"
-                        cursor.execute(sql,(f"{retime}",f"{member.guild.id}",f"{before.channel.id}"))
-                    else:
-                        sql=f"UPDATE {TABLENAME} SET total_time = %s WHERE guild_id = %s AND ch_id = %s"
-                        cursor.execute(sql,(f"{retime+totaltime[0]}",f"{member.guild.id}",f"{before.channel.id}"))
-                self.psql.commit()
-                data={
-                    "title":f"{datetime.timedelta(seconds=retime)}",
-                    "color":11584734,
-                    "fields":[
-                        {
-                            "name":"Channel",
-                            "value":f"{before.channel}",
-                            "inline":True
-                        },
-                        {
-                            "name":"By",
-                            "value":f"{member}",
-                            "inline":True
-                        }
-                    ]
+    async def on_voice_state_update(self, member:discord.Member, before:discord.VoiceState, after:discord.VoiceState):
+        if before.channel != after.channel and after.channel != None:
+            if len(after.channel.members) == 1:
+                db = SessionClass()
+                embed = {
+                    'title':f'Activate {after.channel}',
+                    'color':32768,
+                    'fields':[{
+                        'name':'Event time',
+                        'value':f'{datetime.datetime.now().replace(microsecond=0)}'
+                    }]
                 }
-                await sendch.send(embed=discord.Embed.from_dict(data=data))
+                sendMessage = await member.guild.system_channel.send(embed = discord.Embed.from_dict(data = embed))
+                sql = select(Dvl).where(Dvl.ch_id == after.channel.id)
+                result = db.execute(sql).scalars().first()
+                if result == None:
+                    sql = insert(Dvl).values(ch_id = after.channel.id, message_id = sendMessage.id, start_time = math.floor(time.time()), total_time = 0)
+                    db.execute(sql)
+                    db.commit()
+                else:
+                    sql = update(Dvl).where(Dvl.ch_id == after.channel.id).values(message_id = sendMessage.id, start_time = math.floor(time.time()))
+                    db.execute(sql)
+                    db.commit()
+                db.close()
 
-            if after.channel!=None and len(after.channel.members)==1 and self.judge(after):
-                with self.psql.cursor() as cursor:
-                    sql=f"SELECT send_ch FROM {TABLENAME} WHERE guild_id = %s AND guild_name = %s"
-                    cursor.execute(sql,(f"{member.guild.id}","send"))
-                    if (ch:=cursor.fetchone()) is None:
-                        sendch=member.guild.system_channel
-                    else:
-                        sendch=member.guild.get_channel(ch[0])
-                unix=int(time.time())
-                data={
-                    "title":f"{after.channel}",
-                    "color":11584734,
-                    "fields":[
-                        {
-                            "name":"Time",
-                            "value":f"<t:{unix}:R>",
-                            "inline":True
-                        },
-                        {
-                            "name":"By",
-                            "value":f"{member}",
-                            "inline":True
-                        }
-                    ]
+        elif before.channel != after.channel and before.channel != None:
+            if len(before.channel.members) == 0:
+                db = SessionClass()
+                sql = select(Dvl).where(Dvl.ch_id == before.channel.id)
+                result = db.execute(sql).scalars().first()
+                callTime = time.time() - result.start_time
+                totalTime = callTime + result.total_time
+                delMessage = await member.guild.system_channel.fetch_message(result.message_id)
+                await delMessage.delete()
+                sql = update(Dvl).where(Dvl.ch_id == before.channel.id).values(total_time = totalTime)
+                db.execute(sql)
+                db.commit()
+                db.close()
+                embed = {
+                    'title':f'Deactivate {before.channel}',
+                    'color':16711680,
+                    'fields':[{
+                        'name':'Session time',
+                        'value':f'{datetime.timedelta(seconds = math.floor(callTime))}'
+                    }]
                 }
-                message=await sendch.send(embed=discord.Embed.from_dict(data=data))
-                with self.psql.cursor() as cursor:
-                    sql=f"SELECT unix FROM {TABLENAME} WHERE guild_id = %s AND ch_id = %s"
-                    cursor.execute(sql,(f"{member.guild.id}",f"{after.channel.id}"))
-                    if cursor.fetchone() is None:
-                        sql=f"INSERT INTO {TABLENAME} (guild_name, guild_id, ch_id, message_id, unix) VALUES (%s, %s, %s, %s, %s)"
-                        cursor.execute(sql,(f"{member.guild.name}",f"{member.guild.id}",f"{after.channel.id}", f"{message.id}", f"{unix}"))
-                    else:
-                        sql=f"UPDATE {TABLENAME} SET message_id = %s, unix = %s WHERE guild_id = %s AND ch_id = %s"
-                        cursor.execute(sql,(f"{message.id}", f"{unix}", f"{member.guild.id}", f"{after.channel.id}"))
-                self.psql.commit()
-    
-    @discord.app_commands.command(
-            description="change the sending channel"
-    )
-    async def sendch(self,interaction:discord.Interaction,ch:discord.TextChannel):
-        await interaction.response.defer()
-        with self.psql.cursor() as cursor:
-            sql=f"SELECT send_ch FROM {TABLENAME} WHERE guild_id = %s AND guild_name = %s"
-            cursor.execute(sql,(f"{interaction.guild_id}","send"))
-            if cursor.fetchone() is None:
-                sql=f"INSERT INTO {TABLENAME} (guild_name, guild_id, send_ch) VALUES (%s, %s, %s)"
-                cursor.execute(sql,("send",f"{interaction.guild_id}",f"{ch.id}"))
-            else:
-                sql=f"UPDATE {TABLENAME} SET send_ch = %s WHERE guild_id = %s AND guild_name = %s"
-                cursor.execute(sql,(f"{ch.id}",f"{interaction.guild_id}","send"))
-        self.psql.commit()
-        await interaction.followup.send(f"send to {ch}")
-
-    @discord.app_commands.command(
-        description="init the sending channel"
-    )
-    async def initch(self,interaction:discord.Interaction):
-        await interaction.response.defer()
-        with self.psql.cursor() as cursor:
-            sql=f"DELETE FROM {TABLENAME} WHERE guild_id = %s AND guild_name = %s"
-            cursor.execute(sql,(f"{interaction.guild.id}","send"))
-        self.psql.commit()
-        await interaction.followup.send(f"change {interaction.guild.system_channel}")
-
+                await member.guild.system_channel.send(embed = discord.Embed.from_dict(data = embed))
+        
     @discord.app_commands.command(
         description="show total time on channel"
     )
     async def totaltime(self,interaction:discord.Interaction,ch:discord.VoiceChannel):
-        await interaction.response.defer()
-        with self.psql.cursor() as cursor:
-            sql=f"SELECT total_time FROM {TABLENAME} WHERE guild_id = %s AND ch_id = %s"
-            cursor.execute(sql,(f"{interaction.guild_id}",f"{ch.id}"))
-            if ((result:=cursor.fetchone()) is None) or (None in result):
-                await interaction.followup.send("N/A")
-            else:
-                data={
-                    "title":f"{math.floor(result[0]/3600)}:{math.floor((result[0]%3600)/60)}:{(result[0]%3600)%60}",
-                    "color":11584734,
-                    "fields":[
-                        {
-                            "name":"Channel",
-                            "value":f"{ch}",
-                            "inline":True
-                        }
-                    ]
-                }
-                await interaction.followup.send(embed=discord.Embed.from_dict(data=data))
+        db = SessionClass()
+        sql = select(Dvl).where(Dvl.ch_id == ch.id)
+        result = db.execute(sql).scalars().first()
+        if result == None:
+            await interaction.response.send_message(content = 'Not found')
+        else:
+            embed = {
+                'title':f'{datetime.timedelta(seconds = math.floor(result.total_time))}',
+                'fields':[{
+                    'name':'Channel',
+                    'value':f'{ch}'
+                }]
+            }
+            await interaction.response.send_message(embed = discord.Embed.from_dict(data = embed))
+        db.commit()
+        db.close()
+                
 
 async def setup(bot:commands.Bot):
     await bot.add_cog(command(bot))
