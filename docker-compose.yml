@@ -5,7 +5,6 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: 'dvl'
-    working_dir: '/root/opt/resource'
     environment:
       - TOKEN=${API_TOKEN}
     volumes:
