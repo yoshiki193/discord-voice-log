@@ -5,6 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: 'dvl'
+    tty: true
     environment:
       - TOKEN=${API_TOKEN}
     volumes:
