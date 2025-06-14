@@ -83,7 +83,7 @@ class command(commands.Cog):
             await interaction.response.send_message(content = 'Not found')
         else:
             embed = {
-                'title':f'{datetime.timedelta(seconds = math.floor(result.total_time))}',
+                'title':f'{math.floor(result.total_time / 3600)}時間',
                 'fields':[{
                     'name':'Channel',
                     'value':f'{ch}'
