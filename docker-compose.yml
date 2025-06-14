@@ -8,4 +8,4 @@ services:
     environment:
       - TOKEN=${API_TOKEN}
     volumes:
-      - .:/root/opt
+      - ./resource:/opt

@@ -58,7 +58,7 @@ class command(commands.Cog):
                 totalTime = callTime + result.total_time
                 delMessage = await member.guild.system_channel.fetch_message(result.message_id)
                 await delMessage.delete()
-                sql = update(Dvl).where(Dvl.ch_id == before.channel.id).values(total_time = totalTime)
+                sql = update(Dvl).where(Dvl.ch_id == before.channel.id).values(total_time = math.floor(totalTime))
                 db.execute(sql)
                 db.commit()
                 db.close()
