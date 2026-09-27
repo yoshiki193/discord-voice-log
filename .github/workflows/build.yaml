@@ -2,7 +2,7 @@ name: Build and push image
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   workflow_dispatch:
 
 env:
