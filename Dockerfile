@@ -1,6 +1,13 @@
-FROM python:3.11
-RUN apt-get update && apt -y upgrade
-RUN pip install --upgrade pip && pip install --upgrade setuptools
-RUN pip install discord.py && pip install sqlalchemy
-ENV TZ Asia/Tokyo
-CMD ["python3","/opt/bot.py"]
+FROM python:3.14-slim
+
+ENV TZ=Asia/Tokyo
+ENV PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY src/ .
+
+CMD ["python3","bot.py"]

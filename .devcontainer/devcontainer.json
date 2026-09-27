@@ -1,8 +1,8 @@
 {
     "name":"dvl",
-    "dockerComposeFile":["../docker-compose.yml"],
-    "service": "dvl",
-	"workspaceFolder": "/opt",
+	"service": "dvl",
+    "dockerComposeFile":["../dev.docker-compose.yml"],
+	"workspaceFolder": "/app",
 	"customizations": {
 		"vscode": {
 			"extensions": [

@@ -1,0 +1,11 @@
+services:
+  dvl:
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    tty: true
+    container_name: dvl
+    environment:
+      - API_TOKEN=${API_TOKEN}
+    volumes:
+      - ./src:/app
